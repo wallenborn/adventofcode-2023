@@ -34,7 +34,7 @@ func main() {
 }
 
 func partOne(filename string) {
-	fmt.Println("Part One, reading from " + filename)
+	logger.Info("Part One, reading from " + filename)
 	file, err := os.Open(filename)
 	check(err)
 	defer file.Close()
@@ -60,7 +60,7 @@ func partOne(filename string) {
 }
 
 func partTwo(filename string) {
-	fmt.Println("Part Two, reading from " + filename)
+	logger.Info("Part Two, reading from " + filename)
 	file, err := os.Open(filename)
 	check(err)
 	defer file.Close()
