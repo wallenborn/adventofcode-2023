@@ -142,7 +142,7 @@ func partTwo(filename string) {
 		start := allSeeds[i]
 		length := allSeeds[i+1]
 		logger.Info("Looping over seeds", "start", start, "length", length)
-		for seed := start; seed <= start+length; seed++ {
+		for seed := start; seed < start+length; seed++ {
 			soil := allMappers["seed-to-soil"].lookup(seed)
 			fertilizer := allMappers["soil-to-fertilizer"].lookup(soil)
 			water := allMappers["fertilizer-to-water"].lookup(fertilizer)

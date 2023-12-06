@@ -9,7 +9,7 @@ type RangeMapper struct {
 }
 
 func (m *RangeMapper) accepts(num int) bool {
-	return num >= m.src && num <= m.src+m.len
+	return num >= m.src && num < m.src+m.len
 }
 
 func (m *RangeMapper) lookup(num int) int {
