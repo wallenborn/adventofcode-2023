@@ -68,6 +68,35 @@ func partOne(filename string) {
 	logger.Info("Finished", "result", result)
 }
 
+func partTwo(filename string) {
+	logger.Info("Part Two, reading from " + filename)
+	file, err := os.Open(filename)
+	check(err)
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	result := 0
+	var allhands []hand
+	for scanner.Scan() {
+		line := scanner.Text()
+		logger.Debug(line)
+		tmp := strings.Fields(line)
+		amt, err := strconv.Atoi(tmp[1])
+		check(err)
+		h := hand{cards: tmp[0], bet: amt}
+		allhands = append(allhands, h)
+	}
+	for _, h := range allhands {
+		logger.Debug("Unsorted", "cards", h.cards, "rank", handRank(h.cards))
+	}
+	slices.SortFunc(allhands, compareHandsWithJoker)
+	for i, h := range allhands {
+		logger.Debug("Sorted", "cards", h.cards, "rank", handRank(h.cards))
+		result += h.bet * (i + 1)
+	}
+	check(scanner.Err())
+	logger.Info("Finished", "result", result)
+}
+
 func compareHands(a, b hand) int {
 	ac := a.cards
 	bc := b.cards
@@ -87,6 +116,42 @@ func compareHands(a, b hand) int {
 		}
 	}
 	return 0
+}
+
+func compareHandsWithJoker(a, b hand) int {
+	ac := a.cards
+	bc := b.cards
+	ah := maxHandRank(a.cards)
+	bh := maxHandRank(b.cards)
+	if ah > bh {
+		return 1
+	} else if ah < bh {
+		return -1
+	} else {
+		for i := range ac {
+			ar, _ := utf8.DecodeRuneInString(ac[i:])
+			br, _ := utf8.DecodeRuneInString(bc[i:])
+			if cardRankWithJoker(ar) > cardRankWithJoker(br) {
+				return 1
+			} else if cardRankWithJoker(ar) < cardRankWithJoker(br) {
+				return -1
+			}
+		}
+	}
+	return 0
+}
+
+func maxHandRank(cards string) int {
+	vals := []string{"2", "3", "4", "5", "6", "7", "8", "9", "T", "Q", "K", "A"}
+	maxRank := handRank(cards)
+	for _, r := range vals {
+		s := strings.ReplaceAll(cards, "J", r)
+		sr := handRank(s)
+		if sr > maxRank {
+			maxRank = sr
+		}
+	}
+	return maxRank
 }
 
 func handRank(cards string) int {
@@ -148,11 +213,41 @@ func cardRank(c rune) int {
 		logger.Error("Can't assign card rank", "card", c)
 		return 0
 	}
-
 }
 
-func partTwo(s string) {
-	panic("unimplemented")
+func cardRankWithJoker(c rune) int {
+	switch c {
+	case '2':
+		return 2
+	case '3':
+		return 3
+	case '4':
+		return 4
+	case '5':
+		return 5
+	case '6':
+		return 6
+	case '7':
+		return 7
+	case '8':
+		return 8
+	case '9':
+		return 9
+	case 'T':
+		return 10
+	case 'J':
+		return 1 // Joker is low now
+	case 'Q':
+		return 12
+	case 'K':
+		return 13
+	case 'A':
+		return 14
+	default:
+		logger.Error("Can't assign card rank", "card", c)
+		return 0
+	}
+
 }
 
 func isHighCard(cards string) bool {
