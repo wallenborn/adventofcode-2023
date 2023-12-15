@@ -52,15 +52,15 @@ func partOne(filename string) {
 	for scanner.Scan() {
 		line := scanner.Text()
 		logger.Debug(line)
-		emptyrow = append(emptyrow, false)
+		emptyrow = append(emptyrow, true)
 		if len(emptycol) == 0 {
 			for range line {
 				emptycol = append(emptycol, true)
 			}
 		}
 		allStars := findStars.FindAllStringSubmatchIndex(line, -1)
-		if len(allStars) == 0 {
-			emptyrow[row] = true
+		if len(allStars) != 0 {
+			emptyrow[row] = false
 		}
 		for _, val := range allStars {
 			emptycol[val[0]] = false
@@ -111,15 +111,15 @@ func partTwo(filename string) {
 	for scanner.Scan() {
 		line := scanner.Text()
 		logger.Debug(line)
-		emptyrow = append(emptyrow, false)
+		emptyrow = append(emptyrow, true)
 		if len(emptycol) == 0 {
 			for range line {
 				emptycol = append(emptycol, true)
 			}
 		}
 		allStars := findStars.FindAllStringSubmatchIndex(line, -1)
-		if len(allStars) == 0 {
-			emptyrow[row] = true
+		if len(allStars) != 0 {
+			emptyrow[row] = false
 		}
 		for _, val := range allStars {
 			emptycol[val[0]] = false
